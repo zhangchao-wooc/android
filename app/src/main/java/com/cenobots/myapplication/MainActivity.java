@@ -20,6 +20,10 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -35,8 +39,26 @@ public class MainActivity extends AppCompatActivity {
 
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient());
-//        webView.loadUrl("https://www.baidu.com");
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                JSONObject jsonData = new JSONObject();
+                try {
+                    jsonData.put("phoneNumbers", new JSONArray().put("13170027668"));
+                    jsonData.put("emailAddresses", new JSONArray().put("WOOC@cz-robots.com"));
+
+                    JSONObject json = new JSONObject();
+                    json.put("action", "SERVICE_INFO");
+                    json.put("data", jsonData);
+//                    String jsonString = json.toString();
+//                    System.out.println(jsonString);
+                    webView.loadUrl("javascript:window.postMessage(JSON.stringify(" + json + "), '*');");
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
         webView.loadUrl("http://192.168.111.174:3000/solutions/L50/201/zh_CN.html");
 
