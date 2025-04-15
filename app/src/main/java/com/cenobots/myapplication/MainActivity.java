@@ -44,16 +44,22 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 JSONObject jsonData = new JSONObject();
+                JSONArray phoneNumbers = new JSONArray();
+                JSONArray emailAddresses = new JSONArray();
                 try {
-                    jsonData.put("phoneNumbers", new JSONArray().put("13170027668"));
-                    jsonData.put("emailAddresses", new JSONArray().put("WOOC@cz-robots.com"));
+                    phoneNumbers.put("+1 123456789");
+                    phoneNumbers.put("13170027668");
+                    jsonData.put("phoneNumbers", phoneNumbers);
+                    emailAddresses.put("service@cenobots.com");
+                    emailAddresses.put("wooc@cz-robots.com");
+                    jsonData.put("emailAddresses", emailAddresses);
 
                     JSONObject json = new JSONObject();
                     json.put("action", "SERVICE_INFO");
                     json.put("data", jsonData);
-//                    String jsonString = json.toString();
-//                    System.out.println(jsonString);
-                    webView.loadUrl("javascript:window.postMessage(JSON.stringify(" + json + "), '*');");
+                    String jsonString = json.toString();
+                    System.out.println(jsonString);
+                    webView.loadUrl("javascript:window.postMessage(JSON.stringify(" + jsonString + "), '*');");
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
