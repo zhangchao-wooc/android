@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        webView.loadUrl("http://192.168.111.174:3000/solutions/L50/201/zh_CN.html");
+//        webView.loadUrl("http://192.168.111.90:3000/solutions/L50/201/zh_CN.html");
 
         setSupportActionBar(binding.toolbar);
 

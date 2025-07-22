@@ -8,8 +8,9 @@
 
     <WebView
         android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="590dp"
+        android:layout_height="753dp"
+        tools:layout_editor_absoluteY="-22dp" />
 
     <TextView
         android:id="@+id/textview_first"
@@ -25,9 +26,10 @@
         android:id="@+id/button_first"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/next"
+        android:text="Microsoft Login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_first" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

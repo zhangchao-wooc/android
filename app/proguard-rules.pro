@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class com.tencent.qapmsdk.**{*;}
+# 如需要网络监控，请确保okhttp3不被混淆
+-keep class okhttp3.**{*;}

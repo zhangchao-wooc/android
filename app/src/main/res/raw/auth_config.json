@@ -1,0 +1,14 @@
+{
+  "client_id" : "1482c2e1-b078-4b76-b8a1-aa611346b7c6",
+  "authorization_user_agent" : "DEFAULT",
+  "redirect_uri" : "msauth://com.cenobots.myapplication/JipscvpEVAR%2B6xi3Y3eTw1mfVoc%3D",
+  "authorities" : [
+    {
+      "type": "AAD",
+      "audience": {
+        "type": "AzureADandPersonalMicrosoftAccount",
+        "tenant_id": "common"
+      }
+    }
+  ]
+}
