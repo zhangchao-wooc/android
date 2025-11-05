@@ -12,4 +12,10 @@
         android:orderInCategory="100"
         android:title="@string/push"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/amazon_sns"
+        android:orderInCategory="100"
+        android:title="@string/amazon_sns"
+        app:showAsAction="never" />
 </menu>

@@ -102,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, TpnsActivity.class);
                 startActivity(intent);
                 return true;
+            case R.id.amazon_sns:
+                // 创建Intent跳转到目标Activity（比如 PushActivity）
+                Intent amazonSnsIntent = new Intent(this, AmazonSNS.class);
+                startActivity(amazonSnsIntent);
+                return true;
             // 其他菜单项的处理（如果有）
             default:
                 return super.onOptionsItemSelected(item);
