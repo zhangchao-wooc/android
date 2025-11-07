@@ -1,25 +1,22 @@
-package com.cenobots.myapplication;
+package com.cenobots.myapplication.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.View;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.cenobots.myapplication.R;
 import com.cenobots.myapplication.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,15 +93,19 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+
         switch (item.getItemId()) {
             case R.id.push:
-                // 创建Intent跳转到目标Activity（比如 PushActivity）
-                Intent intent = new Intent(this, TpnsActivity.class);
-                startActivity(intent);
+//                // 创建Intent跳转到目标Activity（比如 PushActivity）
+//                Intent intent = new Intent(this, TpnsActivity.class);
+//                startActivity(intent);
+                NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+                navController.navigate(R.id.action_LoginFragment_to_TPNSFragment);
                 return true;
             case R.id.amazon_sns:
                 // 创建Intent跳转到目标Activity（比如 PushActivity）
-                Intent amazonSnsIntent = new Intent(this, AmazonSNS.class);
+                Intent amazonSnsIntent = new Intent(this, AmazonSNSActivity.class);
                 startActivity(amazonSnsIntent);
                 return true;
             // 其他菜单项的处理（如果有）

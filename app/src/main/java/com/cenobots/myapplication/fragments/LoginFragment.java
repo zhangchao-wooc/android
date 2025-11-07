@@ -1,4 +1,4 @@
-package com.cenobots.myapplication;
+package com.cenobots.myapplication.fragments;
 
 import android.util.Log;
 import android.os.Bundle;
@@ -8,9 +8,10 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.appcompat.app.AlertDialog;
-import com.cenobots.myapplication.databinding.FragmentFirstBinding;
+
+import com.cenobots.myapplication.R;
+import com.cenobots.myapplication.databinding.FragmentLoginBinding;
 
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
@@ -19,10 +20,10 @@ import com.microsoft.identity.client.IPublicClientApplication;
 import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.exception.MsalException;
 
-public class FirstFragment extends Fragment {
+public class LoginFragment extends Fragment {
 
-    private static final String TAG = "FirstFragment"; // 定义日志标签
-    private FragmentFirstBinding binding;
+    private static final String TAG = "LoginFragment"; // 定义日志标签
+    private FragmentLoginBinding binding;
     private IPublicClientApplication msalClient;
 
     @Override
@@ -52,7 +53,7 @@ public class FirstFragment extends Fragment {
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentLoginBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 

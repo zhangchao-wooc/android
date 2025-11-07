@@ -4,8 +4,8 @@
     <string name="push">Push</string>
     <string name="amazon_sns">Amazon SNS</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
+    <string name="login_fragment_label">Login</string>
+    <string name="tpns_fragment_label">TPNS</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
