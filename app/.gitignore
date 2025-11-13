@@ -1,4 +1,4 @@
 /build
 google-services.json
 tpns-configs.json
-aws-configs.json
+src/main/assets/aws-configs.json

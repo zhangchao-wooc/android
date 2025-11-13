@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 采集信息所需 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 申请通知权限（Android 13+需要） -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name=".MyApplication"
@@ -20,7 +22,7 @@
         <service
             android:name=".services.MyFirebaseMessagingService"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
@@ -38,13 +40,17 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!-- 添加处理通知点击的intent-filter -->
+            <intent-filter>
+                <action android:name="android.intent.action.FEEDBACK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.microsoft.identity.client.BrowserTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
@@ -55,9 +61,9 @@
             </intent-filter>
         </activity>
 
-        <meta-data
-            android:name="XG_SERVER_SUFFIX"
-            android:value="tpns.sgp.tencent.com" />
+<!--        <meta-data-->
+<!--            android:name="XG_SERVER_SUFFIX"-->
+<!--            android:value="tpns.sgp.tencent.com" />-->
     </application>
 
 </manifest>

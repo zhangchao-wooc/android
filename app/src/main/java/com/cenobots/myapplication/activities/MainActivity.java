@@ -1,7 +1,9 @@
 package com.cenobots.myapplication.activities;
 
+
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +18,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.cenobots.myapplication.R;
 import com.cenobots.myapplication.databinding.ActivityMainBinding;
+import com.cenobots.myapplication.utils.ConversionUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
@@ -23,18 +26,68 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String TAG = "MainActivity";
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
     private WebView webView;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        // 这行很重要，确保接收到新的intent
+        handleIntentData(intent);
+    }
+
+    public String bundleToJson(Bundle bundle) {
+        try {
+            return ConversionUtil.convertBundleToJson(bundle).toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+    private void handleIntentData(Intent intent) {
+        if (intent != null) {
+            Bundle extras = intent.getExtras();
+//      NotificationChannel      {"data":"{\"message\":\"Sample message for Android endpoints\"}"}
+
+            if (extras != null) {
+                Log.d("handleIntent", "Extras: " + bundleToJson(extras));
+                for (String key : extras.keySet()) {
+                    Object value = extras.get(key);
+                    // 可以在这里处理每个key对应的值
+                    Log.d("handleIntent", "Key: " + key + ", Value: " + value);
+                }
+            } else {
+                Log.d("handleIntent", "没有extras数据");
+            }
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // 处理启动时带的数据
+        handleIntentData(getIntent());
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        InitWebView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    private void InitWebView () {
         webView = findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
@@ -79,13 +132,6 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
     }
 
     @Override

@@ -3,26 +3,27 @@ package com.cenobots.myapplication.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-//import com.amazonaws.auth.StaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointRequest;
 import com.amazonaws.services.sns.model.CreatePlatformEndpointResult;
+import com.amazonaws.services.sns.model.DeleteEndpointRequest;
 import com.cenobots.myapplication.R;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,27 +35,16 @@ public class AmazonSNSActivity extends AppCompatActivity {
 
     private static AmazonSNSClient snsClient;
     static String arnStorage = null;
-    static String region = "us-west-2";
+    static String region = "us-west-2"; // SNS region
+    static String accessKeyId = ""; // AWS accessKeyId
+    static String secretKey = ""; // AWS secretKey
     // 替换为您的AWS SNS平台应用程序ARN
     private static final String PLATFORM_ARN = "arn:aws:sns:us-west-2:190322700616:app/GCM/myapplication";
-
-    private BroadcastReceiver fcmReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String message = intent.getStringExtra("message");
-            // 在这里处理接收到的推送消息
-            Toast.makeText(context, "Received FCM message: " + message, Toast.LENGTH_SHORT).show();
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_amazon_sns);
-
-        // 注册广播接收器
-        LocalBroadcastManager.getInstance(this).registerReceiver(fcmReceiver,
-                new IntentFilter("com.yourapp.FCM_MESSAGE"));
 
         // 设置标题
         setTitle("Amazon SNS");
@@ -63,10 +53,10 @@ public class AmazonSNSActivity extends AppCompatActivity {
         tokenTextView = findViewById(R.id.tokenTextView);
         progressTextView = findViewById(R.id.progressTextView);
 
+        init();
+
         // 绑定按钮
         Button btn = findViewById(R.id.button_in_push);
-
-        // 设置点击事件
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +65,27 @@ public class AmazonSNSActivity extends AppCompatActivity {
                 initAmazonSNS();
             }
         });
+
+        // unregister
+        Button unregisterBtn = findViewById(R.id.button_unregister);
+        unregisterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                progressTextView.setText("反注册开始！");
+                unregister();
+            }
+        });
+    }
+
+    private void init () {
+        String jsonStr = loadJSONFromAsset(this, "aws-configs.json");
+        try {
+            JSONObject config = new JSONObject(jsonStr);
+            accessKeyId = config.getString("access_key_id");
+            secretKey = config.getString("secret_key");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void initAmazonSNS() {
@@ -83,10 +94,6 @@ public class AmazonSNSActivity extends AppCompatActivity {
 
     public static AmazonSNSClient getSNSClient() {
         if (snsClient == null) {
-            // 替换为你的AWS访问密钥和密钥
-            String accessKeyId = "";
-            String secretKey = "";
-
             // 创建基本凭证对象
             BasicAWSCredentials credentials = new BasicAWSCredentials(accessKeyId, secretKey);
 
@@ -128,12 +135,12 @@ public class AmazonSNSActivity extends AppCompatActivity {
                 // 将token注册到Amazon SNS
                 registerDeviceWithSNS(token);
             });
-    } catch (Exception e) {
-        Log.e(TAG, "获取Firebase Token时发生异常", e);
-        if (progressTextView != null) {
-            progressTextView.setText("获取Token异常：" + e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, "获取Firebase Token时发生异常", e);
+            if (progressTextView != null) {
+                progressTextView.setText("获取Token异常：" + e.getMessage());
+            }
         }
-    }
     }
 
     // 将设备注册到Amazon SNS的方法
@@ -176,7 +183,6 @@ public class AmazonSNSActivity extends AppCompatActivity {
                     if (progressTextView != null) {
                         progressTextView.setText("\n成功注册到SNS");
                     }
-                    Toast.makeText(AmazonSNSActivity.this, "成功注册到Amazon SNS", Toast.LENGTH_SHORT).show();
                 });
             } catch (Exception e) {
                 Log.e(TAG, "注册到SNS失败", e);
@@ -184,9 +190,52 @@ public class AmazonSNSActivity extends AppCompatActivity {
                     if (progressTextView != null) {
                         progressTextView.append("\n注册到SNS失败：" + e.getMessage());
                     }
-                    Toast.makeText(AmazonSNSActivity.this, "注册到SNS失败", Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();
+    }
+
+    // 在 Amazon SNS 平台将设备注销的方法
+    public void unregister () {
+        new Thread(() -> {
+            // 获取MyApplication中的SNS客户端实例
+            AmazonSNSClient snsClient = getSNSClient();
+            if (snsClient == null) {
+                Log.e(TAG, "SNS客户端初始化失败");
+                return;
+            }
+            try {
+                // 删除平台端点请求
+                DeleteEndpointRequest request = new DeleteEndpointRequest();
+                request.setEndpointArn(arnStorage);
+                snsClient.deleteEndpoint(request);
+                progressTextView.setText("设备已成功反注册");
+                Log.i("SNS", "设备已成功反注册");
+            } catch (Exception e) {
+                progressTextView.setText("反注册失败");
+                Log.e("SNS", "反注册失败", e);
+            }
+        }).start();
+    }
+
+    public String loadJSONFromAsset(Context context, String filename) {
+        String json = null;
+        try {
+            InputStream is = context.getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return json;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

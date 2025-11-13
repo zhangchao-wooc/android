@@ -21,7 +21,6 @@ import com.microsoft.identity.client.PublicClientApplication;
 import com.microsoft.identity.client.exception.MsalException;
 
 public class LoginFragment extends Fragment {
-
     private static final String TAG = "LoginFragment"; // 定义日志标签
     private FragmentLoginBinding binding;
     private IPublicClientApplication msalClient;
@@ -29,23 +28,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // 初始化MSAL客户端
-        Log.d(TAG, "初始化MSAL客户端");
-        PublicClientApplication.create(getActivity(),
-                R.raw.auth_config, // 配置文件，放在res/raw目录下
-                new IPublicClientApplication.ApplicationCreatedListener() {
-                    @Override
-                    public void onCreated(IPublicClientApplication application) {
-                        Log.d(TAG, "msalClient 初始化成功");
-                        msalClient = application;
-                    }
-
-                    @Override
-                    public void onError(MsalException exception) {
-                        // 处理错误
-                        Log.d(TAG, "msalClient 初始化失败" + exception.getMessage());
-                    }
-                });
+//        initMsal(); // 初始化MSAL客户端
     }
 
     @Override
@@ -100,6 +83,25 @@ public class LoginFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void initMsal () {
+        Log.d(TAG, "初始化MSAL客户端");
+        PublicClientApplication.create(getActivity(),
+                R.raw.auth_config, // 配置文件，放在res/raw目录下
+                new IPublicClientApplication.ApplicationCreatedListener() {
+                    @Override
+                    public void onCreated(IPublicClientApplication application) {
+                        Log.d(TAG, "msalClient 初始化成功");
+                        msalClient = application;
+                    }
+
+                    @Override
+                    public void onError(MsalException exception) {
+                        // 处理错误
+                        Log.d(TAG, "msalClient 初始化失败" + exception.getMessage());
+                    }
+                });
     }
 
     private void showSuccessDialog(String token) {
